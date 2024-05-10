@@ -1,0 +1,99 @@
+import java.util.Random;
+
+public class TextBasedAdventureGame {
+public static void main(String[] args) {
+char[][] forest = generateForest(5, 5);
+displayForest(forest);
+movePlayer(forest, 'D');
+displayForest(forest);
+}
+
+public static char[][] generateForest(int rows, int cols) {
+char[][] forest = new char[rows][cols];
+Random random = new Random();
+
+// Populate forest with open space and trees
+for (int i = 0; i < rows; i++) {
+for (int j = 0; j < cols; j++) {
+if (random.nextDouble() < 0.7) {
+forest[i][j] = '.';
+} else {
+forest[i][j] = 'T';
+}
+}
+}
+
+// Place player at random empty location
+int playerRow, playerCol;
+do {
+playerRow = random.nextInt(rows);
+playerCol = random.nextInt(cols);
+} while (forest[playerRow][playerCol] != '.');
+forest[playerRow][playerCol] = 'P';
+
+return forest;
+}
+
+public static void displayForest(char[][] forest) {
+for (char[] row : forest) {
+for (char cell : row) {
+System.out.print(cell + " ");
+}
+System.out.println();
+}
+System.out.println();
+}
+
+public static void movePlayer(char[][] forest, char direction) {
+int[] playerPos = findPlayer(forest);
+int playerRow = playerPos[0];
+int playerCol = playerPos[1];
+
+int newRow = playerRow;
+int newCol = playerCol;
+
+switch (direction) {
+case 'W':
+newRow--;
+break;
+case 'S':
+newRow++;
+break;
+case 'A':
+newCol--;
+break;
+case 'D':
+newCol++;
+break;
+default:
+System.out.println("Invalid direction. Please use W, S, A, or D.");
+return;
+}
+
+if (isValidMove(forest, newRow, newCol)) {
+// Move player
+forest[playerRow][playerCol] = '.';
+forest[newRow][newCol] = 'P';
+} else {
+System.out.println("Invalid move. Please try again.");
+}
+}
+
+private static int[] findPlayer(char[][] forest) {
+int[] playerPos = new int[2];
+for (int i = 0; i < forest.length; i++) {
+for (int j = 0; j < forest[i].length; j++) {
+if (forest[i][j] == 'P') {
+playerPos[0] = i;
+playerPos[1] = j;
+return playerPos;
+}
+}
+}
+return playerPos;
+}
+
+private static boolean isValidMove(char[][] forest, int row, int col) {
+return row >= 0 && row < forest.length && col >= 0 && col < forest[0].length && forest[row][col] != 'T';
+}
+}
